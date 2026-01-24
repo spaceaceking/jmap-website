@@ -1150,12 +1150,12 @@
                 <a href="#about">About J-MAP</a>
                 <a href="#why-jmap">Why Choose Us</a>
                 <a href="#quote">Get a Quote</a>
-                <a href="mailto:phillip@jmapamerica.com">Contact</a>
+                <a href="mailto:quotes@jmap.us">Contact</a>
             </div>
             <div class="footer-column">
                 <h4>Contact</h4>
                 <a href="tel:+14793135397">(479) 313-5397</a>
-                <a href="mailto:phillip@jmapamerica.com">phillip@jmapamerica.com</a>
+                <a href="mailto:quotes@jmap.us">quotes@jmap.us</a>
                 <p style="color: #94a3b8; font-size: 0.9rem; margin-top: 1rem;">Arkansas, USA</p>
             </div>
         </div>
@@ -1217,7 +1217,7 @@ ${data.notes || 'None'}
                     formSuccess.classList.add('show');
                 } else {
                     // Fallback to mailto
-                    window.location.href = `mailto:phillip@jmapamerica.com?subject=Freight Quote Request from ${data.company}&body=${encodeURIComponent(emailBody)}`;
+                    window.location.href = `mailto:quotes@jmap.us?subject=Freight Quote Request from ${data.company}&body=${encodeURIComponent(emailBody)}`;
                 }
             } catch (error) {
                 // Fallback to mailto on any error
@@ -1236,7 +1236,7 @@ Commodity: ${data.commodity}
 Notes: ${data.notes || 'None'}
                 `.trim();
 
-                window.location.href = `mailto:phillip@jmapamerica.com?subject=Freight Quote Request from ${data.company}&body=${encodeURIComponent(emailBody)}`;
+                window.location.href = `mailto:quotes@jmap.us?subject=Freight Quote Request from ${data.company}&body=${encodeURIComponent(emailBody)}`;
             }
         });
 
