@@ -814,6 +814,54 @@
         .form-success p {
             color: var(--jmap-gray);
         }
+
+        /* Captcha Styling */
+        .captcha-group {
+            background: #f1f5f9;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px dashed #cbd5e1;
+        }
+
+        .captcha-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .captcha-question {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--jmap-dark);
+            background: white;
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            white-space: nowrap;
+        }
+
+        .captcha-container input {
+            flex: 1;
+            max-width: 120px;
+        }
+
+        .captcha-hint {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--jmap-gray);
+            margin-top: 0.5rem;
+        }
+
+        .captcha-error {
+            color: #dc2626;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .captcha-error.show {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -940,6 +988,15 @@
                     <div class="form-group full-width">
                         <label for="notes">Additional Information</label>
                         <textarea id="notes" name="notes" placeholder="Special requirements, hazmat, oversized, appointment times, etc."></textarea>
+                    </div>
+
+                    <div class="form-group full-width captcha-group">
+                        <label for="captcha">Quick Security Check *</label>
+                        <div class="captcha-container">
+                            <span class="captcha-question" id="captchaQuestion"></span>
+                            <input type="text" id="captcha" name="captcha" placeholder="Your answer" required autocomplete="off">
+                        </div>
+                        <span class="captcha-hint">Prove you're human by answering the simple math question</span>
                     </div>
 
                     <button type="submit" class="submit-btn">Get My Quote</button>
@@ -1174,6 +1231,43 @@
     </footer>
 
     <script>
+        // Captcha generation and validation
+        let captchaAnswer = null;
+
+        function generateCaptcha() {
+            const operations = [
+                () => {
+                    const a = Math.floor(Math.random() * 10) + 1;
+                    const b = Math.floor(Math.random() * 10) + 1;
+                    return { question: `${a} + ${b} = ?`, answer: a + b };
+                },
+                () => {
+                    const a = Math.floor(Math.random() * 10) + 5;
+                    const b = Math.floor(Math.random() * 5) + 1;
+                    return { question: `${a} - ${b} = ?`, answer: a - b };
+                },
+                () => {
+                    const a = Math.floor(Math.random() * 5) + 2;
+                    const b = Math.floor(Math.random() * 5) + 2;
+                    return { question: `${a} × ${b} = ?`, answer: a * b };
+                }
+            ];
+
+            const operation = operations[Math.floor(Math.random() * operations.length)];
+            const { question, answer } = operation();
+
+            document.getElementById('captchaQuestion').textContent = question;
+            captchaAnswer = answer;
+        }
+
+        function validateCaptcha() {
+            const userAnswer = parseInt(document.getElementById('captcha').value, 10);
+            return userAnswer === captchaAnswer;
+        }
+
+        // Initialize captcha on page load
+        generateCaptcha();
+
         // Form submission handling
         const form = document.getElementById('quoteForm');
         const formSuccess = document.getElementById('formSuccess');
@@ -1181,7 +1275,21 @@
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
 
+            // Validate captcha first
+            if (!validateCaptcha()) {
+                const captchaInput = document.getElementById('captcha');
+                captchaInput.style.borderColor = '#dc2626';
+                captchaInput.style.boxShadow = '0 0 0 3px rgba(220, 38, 38, 0.2)';
+                captchaInput.value = '';
+                captchaInput.placeholder = 'Incorrect - try again';
+                generateCaptcha(); // Generate new question
+                captchaInput.focus();
+                return;
+            }
+
             const formData = new FormData(form);
+            // Remove captcha from form data sent to Formspree
+            formData.delete('captcha');
 
             try {
                 // Send to Formspree (you'll need to set up a Formspree account)
