@@ -1329,6 +1329,12 @@ ${data.notes || 'None'}
                 });
 
                 if (response.ok) {
+                    // Fire Google Ads conversion tracking
+                    gtag('event', 'conversion', {
+                        'send_to': 'AW-17900004114/nQaECPyyrOsbEJLGsddC',
+                        'value': 1.0,
+                        'currency': 'USD'
+                    });
                     form.style.display = 'none';
                     formSuccess.classList.add('show');
                 } else {
